@@ -17,11 +17,10 @@ def get_time(uuid: UUIDStruct,
 
     try:
         if version == 1.5:
-            timestamp = int(uuid.time_low + uuid.time_mid, 16) * 4
-            
-            return datetime.fromtimestamp(0x12ce1960) + timedelta(microseconds=timestamp)
-        
-        if version == 1:
+            timestamp: float = (int(uuid.time_low +
+                                    uuid.time_mid, 16) * 4 / 1e6 +
+                                    0x12ce1960)
+        elif version == 1:
             timestamp: float = (int((uuid.time_hi_and_version[1:] +
                                     uuid.time_mid +
                                     uuid.time_low), 16) -
