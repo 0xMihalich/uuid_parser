@@ -13,4 +13,4 @@ def get_domain(varseq: UUIDVarSeq) -> str:
 
     domain: int = varseq.clock_seq_low
 
-    return f'{_domains.get(domain, "Custom")} [{domain}]'
+    return f'{domain} [{_domains.get(domain, "Custom")}]'
