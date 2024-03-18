@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from datetime import datetime
 from typing import Dict, NamedTuple, Optional, Union
 
@@ -5,6 +6,18 @@ from .domain import get_domain
 from .enums import UUIDVersion, UUIDVariant
 from .struct import UUIDStruct
 from .var_seq import UUIDVarSeq
+
+
+class UUIDDict(OrderedDict):
+    """Базовый класс параметров UUID для вывода параметров в правильном порядке."""
+
+    def __init__(self: "UUIDDict") -> None:
+
+        super().__init__()
+        self["UUID"]           = None
+        self["Version"]        = None
+        self["Variant"]        = None
+        self["Generated time"] = None
 
 
 class UUIDInfo(NamedTuple):
@@ -23,7 +36,10 @@ def get_secret(uuid: UUIDStruct,
 
     secret: dict = {}
 
-    if ver in (1, 6,):
+    if ver == 1.5:
+        secret["Address Family"] = varseq.clock_seq_low
+        secret["Host ID"] = int(uuid.node, 16)
+    elif ver in (1, 6,):
         secret["MAC Address"] = ":".join(uuid.node[_i:_i + 2].upper()
                                          for _i in range(0, 12, 2))
         secret["Clock Sequence"] = (int(hex(varseq.clock_seq_hi) + 

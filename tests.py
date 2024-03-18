@@ -11,11 +11,11 @@ uuids_for_tests = (
     "018e4844-52cc-7277-989a-4a1db39e3b46", # UUIDv7
     "018e4861-5efd-88dc-974a-f4964a2a5bf6", # UUIDv8
     "ffffffff-ffff-ffff-ffff-ffffffffffff", # Max UUID
+    "573e0100-1364-ffff-000d-b3e35e8b3c41", # UUIDv1.5
 )
 
 for num, uuid in enumerate(uuids_for_tests):
     print(f"TEST {num}:")
     print(UUIDParser(uuid))
-    print("_________________________________")
 
 print("all tests done.")

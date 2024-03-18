@@ -1,17 +1,19 @@
 from enum import Enum
+from typing import List, Union
 
 
 _versions: dict = {
-    "Nil_UUID": "Nil UUID",
-    "Date_MAC": "Date and MAC-address",
-    "Date_MAC_DCE": "Date, MAC-address and DCE",
-    "Namespace_Name_MD5": "MD5 from Namespace and Name",
-    "Random": "Random bytes",
+    "Nil_UUID"           : "Nil UUID",
+    "Date_MAC"           : "Date and MAC-address",
+    "Apollo_NCS"         : "Apollo Network Computing System",
+    "Date_MAC_DCE"       : "Date, MAC-address and DCE",
+    "Namespace_Name_MD5" : "MD5 from Namespace and Name",
+    "Random"             : "Random bytes",
     "Namespace_Name_SHA1": "SHA1 from Namespace and Name",
-    "Datesort_MAC": "Sorted Date and MAC-address",
-    "Monotonic": "Monotonic",
-    "RFC_Native": "RFC Native",
-    "Max_UUID": "Max UUID",
+    "Datesort_MAC"       : "Sorted Date and MAC-address",
+    "Monotonic"          : "Monotonic",
+    "RFC_Native"         : "RFC Native",
+    "Max_UUID"           : "Max UUID",
 }
 
 
@@ -20,6 +22,7 @@ class UUIDVersion(Enum):
 
     Nil_UUID: int            = 0
     Date_MAC: int            = 1
+    Apollo_NCS: float        = 1.5
     Date_MAC_DCE: int        = 2
     Namespace_Name_MD5: int  = 3
     Random: int              = 4
@@ -31,8 +34,15 @@ class UUIDVersion(Enum):
 
     @property
     def string(self: "UUIDVersion") -> str:
+        """Отобразить в виде строки."""
 
         return f'UUIDv{self.value} [{_versions.get(self.name, "Unknown")}]'
+
+    @classmethod
+    def values(self: "UUIDVersion") -> List[Union[int, float,]]:
+        """Вернуть список значений."""
+
+        return list(self._value2member_map_)
 
 
 class UUIDVariant(Enum):
@@ -45,5 +55,6 @@ class UUIDVariant(Enum):
 
     @property
     def string(self: "UUIDVariant") -> str:
+        """Отобразить в виде строки."""
 
         return f"{self.value} [{self.name.capitalize()}]"
