@@ -43,6 +43,7 @@
 - time_hi_and_version: str                     - Третий блок UUID (4 символа или 2 байта, первый символ определяет версию UUID)
 - clock_seq_hi_and_reserved_clock_seq_low: str - Четвертый блок UUID (4 символа или 2 байта, первый символ определяет вариант UUID)
 - node: str                                    - Пятый блок UUID (12 символов или 6 байт)
+
 Методы:
 -------
 - from_uuidstr - Инициализация именованного кортежа UUIDStruct из uuid-строки.
