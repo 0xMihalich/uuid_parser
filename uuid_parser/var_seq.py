@@ -24,7 +24,7 @@ def get_variant_sequence(uuid: UUIDStruct) -> UUIDVarSeq:
     """Распарсить UUID.clock_seq_hi_and_reserved_clock_seq_low."""
 
     uuid_varseq: str = uuid.clock_seq_hi_and_reserved_clock_seq_low
-    var_seq_hi: str  = bin(int(uuid_varseq[:2], 16))[2:].zfill(4)
+    var_seq_hi: str  = bin(int(uuid_varseq[:2], 16))[2:].zfill(8)
 
     pos: int = 0
     variant: Optional[UUIDVariant] = None

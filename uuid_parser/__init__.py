@@ -1,19 +1,21 @@
 from datetime import datetime
 from re import compile, IGNORECASE, Pattern
 from typing import Dict, Optional, Union
+from uuid import UUID
 
 from .enums import UUIDVariant, UUIDVersion
 from .errors import UUIDNotMaxError, UUIDNotNilError, UUIDParserError, UUIDVerionError
 from .info import get_secret, UUIDInfo, UUIDDict
 from .struct import UUIDStruct
 from .time import get_time
+from .type_conv import to_bytes, to_string
 from .var_seq import get_variant_sequence, UUIDVarSeq
 from .version import get_version
 
 
 __author__  = "0xMihalich"
-__version__ = "0.1.1"
-__date__    = "2024-03-18 02:19:15"
+__version__ = "0.1.2"
+__date__    = "2024-03-21 01:03:29"
 
 
 class UUIDParser:
@@ -23,20 +25,30 @@ class UUIDParser:
                                IGNORECASE,)
 
     def __init__(self: "UUIDParser",
-                 uuid_str: str,) -> None:
+                 uuid: Union[str, bytes, UUID,],) -> None:
         """Инициализация класса."""
 
-        if not isinstance(uuid_str, str):
-            raise UUIDParserError(f"UUID must be string, not a {type(uuid_str)}.")
-        elif not bool(self.pattern.match(uuid_str)):
-            raise UUIDParserError("UUID string not valid.")
+        if not isinstance(uuid, Union[str, bytes, UUID,]):
+            raise UUIDParserError(f"UUID must be string, not a {type(uuid)}.")
+        
+        if isinstance(uuid, str):
+            if not bool(self.pattern.match(uuid)):
+                raise UUIDParserError("UUID string not valid.")
+        elif isinstance(uuid, bytes):
+            if len(uuid) != 16:
+                raise UUIDParserError("UUID bytes not valid.")
+            uuid: str = to_string(uuid)
+        elif isinstance(uuid, UUID):
+            uuid: str = str(uuid)
 
-        self.uuid: UUIDStruct = UUIDStruct.from_uuidstr(uuid_str)
+        self.uuid: UUIDStruct = UUIDStruct.from_uuidstr(uuid)
         self.version: int = get_version(self.uuid)
         self.varseq: UUIDVarSeq = get_variant_sequence(self.uuid)
 
         if self.varseq.variant.value == 0 and self.uuid.int != 0 and self.varseq.clock_seq_low <= 13:
             self.version = 1.5
+        elif self.uuid.str == "00000000-0000-0000-c000-000000000046":
+            self.version = None
         
         if self.version == 0 and self.uuid.int != 0:
             raise UUIDNotNilError(f"{self.uuid.str} have version 0 and not match with Nil UUID.")
@@ -60,8 +72,8 @@ class UUIDParser:
                                        self.time,
                                        self.secret,)
 
-    def __str__(self: "UUIDParser") -> str:
-        """Строковое представление класса."""
+    def __repr__(self: "UUIDParser") -> str:
+        """Строковое представление класса для интерпретатора."""
 
         _num: int = len(self.dict) - 1
         col0: int = 64
@@ -82,7 +94,12 @@ class UUIDParser:
 
         return string
 
-    def __repr__(self: "UUIDParser") -> str:
-        """Строковое представление класса для интерпретатора."""
+    def __str__(self: "UUIDParser") -> str:
+        """Вернуть UUID строку."""
 
-        return self.__str__()
+        return self.uuid.str
+
+    def __bytes__(self: "UUIDParser") -> bytes:
+        """Вернуть байты."""
+
+        return to_bytes(self.uuid.str)
