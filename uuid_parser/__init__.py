@@ -29,7 +29,7 @@ class UUIDParser:
         """Инициализация класса."""
 
         if not isinstance(uuid, Union[str, bytes, UUID,]):
-            raise UUIDParserError(f"UUID must be string, not a {type(uuid)}.")
+            raise UUIDParserError(f"UUID must be string, bytes or uuid.UUID, not a {type(uuid)}.")
         
         if isinstance(uuid, str):
             if not bool(self.pattern.match(uuid)):
