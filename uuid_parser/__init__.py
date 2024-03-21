@@ -3,19 +3,20 @@ from re import compile, IGNORECASE, Pattern
 from typing import Dict, Optional, Union
 from uuid import UUID
 
+from .variant import change_variant
 from .enums import UUIDVariant, UUIDVersion
 from .errors import UUIDNotMaxError, UUIDNotNilError, UUIDParserError, UUIDVerionError
 from .info import get_secret, UUIDInfo, UUIDDict
 from .struct import UUIDStruct
-from .time import get_time
+from .time import change_time, get_time
 from .type_conv import to_bytes, to_string
 from .var_seq import get_variant_sequence, UUIDVarSeq
 from .version import get_version
 
 
 __author__  = "0xMihalich"
-__version__ = "0.1.2"
-__date__    = "2024-03-21 01:03:29"
+__version__ = "0.1.3"
+__date__    = "2024-03-22 04:51:47"
 
 
 class UUIDParser:
@@ -83,7 +84,7 @@ class UUIDParser:
         version: str = f"{type(self).__name__} v{__version__} result"
         header: str = f"┌{'─' * col0}┐\n│{version: ^{col0}}│\n╞{'═' * col0}╡\n"
         border: str = f"│{'-' * col1}│{'-' * col2}│\n"
-        footer: str = f"└{'─' * col1}┴{'─' * col2}┘"
+        footer: str = f"└{'─' * col0}┘"
 
         string: str = header
 
@@ -93,13 +94,33 @@ class UUIDParser:
             string += footer if num == _num else border
 
         return string
+    
+    def __int__(self: "UUIDParser") -> int:
+        """Вернуть как Integer."""
+
+        return self.uuid.int
+
+    def __hash__(self: "UUIDParser") -> int:
+        """Посчитать hash UUID."""
+
+        return hash(self.uuid.int)
 
     def __str__(self: "UUIDParser") -> str:
-        """Вернуть UUID строку."""
+        """Вернуть как UUID строку."""
 
         return self.uuid.str
 
     def __bytes__(self: "UUIDParser") -> bytes:
-        """Вернуть байты."""
+        """Вернуть как Bytes."""
 
         return to_bytes(self.uuid.str)
+
+    def change_variant(self: "UUIDParser", variant: int) -> "UUIDParser":
+        """Изменить UUID variant. Возвращает новый объект UUIDParser."""
+
+        return UUIDParser(change_variant(self.uuid, self.varseq, variant,))
+    
+    def change_time(self: "UUIDParser", time: datetime) -> "UUIDParser":
+        """Изменить временную метку UUID. Возвращает новый объект UUIDParser."""
+
+        return UUIDParser(change_time(self.uuid, self.version, self.varseq, time,))

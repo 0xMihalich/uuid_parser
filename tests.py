@@ -19,6 +19,7 @@ if __name__ == "__main__":
         "ffffffff-ffff-ffff-ffff-ffffffffffff", # Max UUID
         "573e0100-1364-ffff-000d-b3e35e8b3c41", # Apollo_NCS
         "00000000-0000-0000-C000-000000000046", # IUnknown_COM
+        "ffffffff-ffff-ffff-000d-b3e35e8b3c41", # Apollo_NCS
         # init from bytes
         b'h\xb6\xc1\x19\x15\xe4\xee!\xd1\x02\x1f}\xd2\x8d\x8d\xe4', # 19c1b668-e415-21ee-d102-1f7dd28d8de4 as bytes
         # init from UUID
@@ -29,7 +30,8 @@ if __name__ == "__main__":
         print(f"TEST {num}:")
         parser = UUIDParser(uuid)
         pprint(parser)
-        print(f"as string: {parser}")
+        print(f"as string: {str(parser)}")
         print(f"as bytes: {bytes(parser)}")
+        print(f"as integer: {int(parser)}")
 
     print("all tests done.")
