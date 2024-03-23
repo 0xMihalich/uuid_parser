@@ -33,5 +33,10 @@ if __name__ == "__main__":
         print(f"as string: {str(parser)}")
         print(f"as bytes: {bytes(parser)}")
         print(f"as integer: {int(parser)}")
+        print(f"as byte hex: {hex(int(parser))}")
+        print(f"as int hex: {parser.hex()}")
+        print(f"hash: {hash(parser)}")
+        print(f"to 1C UUID: {parser.to_1c}")
+        print("from 1C UUID: %s" % parser.from_1c(parser.to_1c))
 
     print("all tests done.")

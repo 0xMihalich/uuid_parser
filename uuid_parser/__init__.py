@@ -3,7 +3,7 @@ from re import compile, IGNORECASE, Pattern
 from typing import Dict, Optional, Union
 from uuid import UUID
 
-from .variant import change_variant
+from .database_1c import from_1c, to_1c
 from .enums import UUIDVariant, UUIDVersion
 from .errors import UUIDNotMaxError, UUIDNotNilError, UUIDParserError, UUIDVerionError
 from .info import get_secret, UUIDInfo, UUIDDict
@@ -11,12 +11,13 @@ from .struct import UUIDStruct
 from .time import change_time, get_time
 from .type_conv import to_bytes, to_string
 from .var_seq import get_variant_sequence, UUIDVarSeq
+from .variant import change_variant
 from .version import get_version
 
 
 __author__  = "0xMihalich"
-__version__ = "0.1.3"
-__date__    = "2024-03-22 04:51:47"
+__version__ = "0.1.4"
+__date__    = "2024-03-23 17:27:03"
 
 
 class UUIDParser:
@@ -115,6 +116,11 @@ class UUIDParser:
 
         return to_bytes(self.uuid.str)
 
+    def hex(self: "UUIDParser") -> str:
+        """Вернуть как HEX String."""
+
+        return bytes(self).hex().strip("0") or "0"
+
     def change_variant(self: "UUIDParser", variant: int) -> "UUIDParser":
         """Изменить UUID variant. Возвращает новый объект UUIDParser."""
 
@@ -124,3 +130,15 @@ class UUIDParser:
         """Изменить временную метку UUID. Возвращает новый объект UUIDParser."""
 
         return UUIDParser(change_time(self.uuid, self.version, self.varseq, time,))
+    
+    @classmethod
+    def from_1c(cls: "UUIDParser", uuid_1c: bytes) -> "UUIDParser":
+        """Получить объект UUIDParser из формата 1С UUID."""
+
+        return cls(from_1c(uuid_1c))
+
+    @property
+    def to_1c(self: "UUIDParser") -> bytes:
+        """Преобразовать объект UUIDParser в формат 1С UUID."""
+
+        return to_1c(str(self))
