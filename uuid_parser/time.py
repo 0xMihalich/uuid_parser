@@ -5,16 +5,12 @@ from .errors import UUIDTimeError
 from .struct import UUIDStruct
 from .var_seq import UUIDVarSeq
 from .variant import _variants
-from .version import get_version
 
 
 def get_time(uuid: UUIDStruct,
              version: Optional[int] = None,) -> Optional[datetime]:
     """Определить время генерации если это возможно."""
-
-    if not version:
-        version: int = get_version(uuid)
-    
+  
     timestamp: Optional[float] = None
 
     try:
@@ -64,7 +60,7 @@ def change_time(uuid: UUIDStruct,
         raise UUIDTimeError("time must be a datetime.")
     
     _stamp: float = (time - datetime.fromtimestamp(0)).total_seconds()
-    _version: int = get_version(uuid)
+    _version: int = int(uuid.str[14], 16)
     version: str = hex(_version)[2:]
     variant_bits: str = _variants.get(varseq.variant.value)
     uuid_blocks: List[str] = list(uuid)

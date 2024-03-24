@@ -4,20 +4,47 @@ from typing import Dict, Optional, Union
 from uuid import UUID
 
 from .database_1c import from_1c, to_1c
+from .domain import get_domain
 from .enums import UUIDVariant, UUIDVersion
-from .errors import UUIDNotMaxError, UUIDNotNilError, UUIDParserError, UUIDVerionError
+from .errors import UUIDNotMaxError, UUIDNotNilError, UUIDParserError, UUIDTimeError, UUIDVariantError, UUIDVerionError
 from .info import get_secret, UUIDInfo, UUIDDict
 from .struct import UUIDStruct
 from .time import change_time, get_time
 from .type_conv import to_bytes, to_string
 from .var_seq import get_variant_sequence, UUIDVarSeq
 from .variant import change_variant
-from .version import get_version
+from .version import change_version, get_version
 
+
+__all__ = ["UUIDDict",
+           "UUIDInfo",
+           "UUIDNotMaxError",
+           "UUIDNotNilError",
+           "UUIDParser",
+           "UUIDParserError",
+           "UUIDStruct",
+           "UUIDTimeError",
+           "UUIDVarSeq",
+           "UUIDVariant",
+           "UUIDVariantError",
+           "UUIDVerionError",
+           "UUIDVersion",
+           "change_time",
+           "change_variant",
+           "change_version",
+           "from_1c",
+           "get_domain",
+           "get_secret",
+           "get_time",
+           "get_variant_sequence",
+           "get_version",
+           "to_1c",
+           "to_bytes",
+           "to_string",]
 
 __author__  = "0xMihalich"
-__version__ = "0.1.4"
-__date__    = "2024-03-23 17:27:03"
+__version__ = "0.1.5"
+__date__    = "2024-03-25 02:08:27"
 
 
 class UUIDParser:
@@ -69,8 +96,8 @@ class UUIDParser:
         self.dict["Variant"]        = UUIDVariant(self.varseq.variant).string
         self.dict["Generated time"] = self.time.strftime("%Y-%m-%d %H:%M:%S") if self.time else "Undefined"
 
-        self.info: UUIDInfo = UUIDInfo(self.dict["Version"],
-                                       self.dict["Variant"],
+        self.info: UUIDInfo = UUIDInfo(UUIDVersion(self.version),
+                                       self.varseq.variant,
                                        self.time,
                                        self.secret,)
 
@@ -120,24 +147,28 @@ class UUIDParser:
         """Вернуть как HEX String."""
 
         return bytes(self).hex().strip("0") or "0"
-
-    def change_variant(self: "UUIDParser", variant: int) -> "UUIDParser":
-        """Изменить UUID variant. Возвращает новый объект UUIDParser."""
-
-        return UUIDParser(change_variant(self.uuid, self.varseq, variant,))
     
-    def change_time(self: "UUIDParser", time: datetime) -> "UUIDParser":
+    def change_time(self: "UUIDParser", time: datetime,) -> "UUIDParser":
         """Изменить временную метку UUID. Возвращает новый объект UUIDParser."""
 
         return UUIDParser(change_time(self.uuid, self.version, self.varseq, time,))
+
+    def change_variant(self: "UUIDParser", variant: int,) -> "UUIDParser":
+        """Изменить UUID variant. Возвращает новый объект UUIDParser."""
+
+        return UUIDParser(change_variant(self.uuid, self.varseq, variant,))
+
+    def change_version(self: "UUIDParser", version: int,) -> "UUIDParser":
+        """Изменить UUID version. Возвращает новый объект UUIDParser."""
+
+        return UUIDParser(change_version(str(self), self.info, self.dict, version,))
     
     @classmethod
-    def from_1c(cls: "UUIDParser", uuid_1c: bytes) -> "UUIDParser":
+    def from_1c(cls: "UUIDParser", uuid_1c: bytes,) -> "UUIDParser":
         """Получить объект UUIDParser из формата 1С UUID."""
 
         return cls(from_1c(uuid_1c))
 
-    @property
     def to_1c(self: "UUIDParser") -> bytes:
         """Преобразовать объект UUIDParser в формат 1С UUID."""
 
