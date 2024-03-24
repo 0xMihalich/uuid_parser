@@ -10,13 +10,13 @@ class UUIDVariantError(UUIDParserError):
     """Ошибка UUID variant."""
 
 
-class UUIDVerionError(UUIDParserError):
+class UUIDVersionError(UUIDParserError):
     """Неизвестная версия UUID."""
 
 
-class UUIDNotNilError(UUIDVerionError):
+class UUIDNotNilError(UUIDVersionError):
     """Получен не Nil UUID."""
 
 
-class UUIDNotMaxError(UUIDVerionError):
+class UUIDNotMaxError(UUIDVersionError):
     """Получен не Max UUID."""

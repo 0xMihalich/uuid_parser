@@ -3,7 +3,7 @@ from json import dumps
 from struct import unpack
 
 from .enums import UUIDVersion, UUIDVariant
-from .errors import UUIDVerionError
+from .errors import UUIDVersionError
 from .info import UUIDInfo, UUIDDict
 from .struct import UUIDStruct
 from .time import change_time
@@ -29,22 +29,22 @@ def change_version(uuid_str: str, uuid_info: UUIDInfo, uuid_dict: UUIDDict, vers
     """Изменить версию UUID."""
 
     if uuid_info.version.name in ('Nil_UUID', 'IUnknown_COM', 'Max_UUID',):
-        raise UUIDVerionError("Can't change version for special UUID.")
+        raise UUIDVersionError("Can't change version for special UUID.")
     elif uuid_info.version.name in ('Namespace_Name_MD5', 'Namespace_Name_SHA1',):
-        raise UUIDVerionError("Can't change version from Hashed UUID.")
+        raise UUIDVersionError("Can't change version from Hashed UUID.")
     elif uuid_info.version.name == 'Random' and version not in (3, 5,):
-        raise UUIDVerionError("Random UUID must be changed to Hashed UUID only.")
+        raise UUIDVersionError("Random UUID must be changed to Hashed UUID only.")
     elif version == 4:
-        raise UUIDVerionError("Can't change version to Random UUID.")
+        raise UUIDVersionError("Can't change version to Random UUID.")
     
     if not isinstance(version, int):
-        raise UUIDVerionError("Version must be integer.")
+        raise UUIDVersionError("Version must be integer.")
     elif version in (0, 15,):
-        raise UUIDVerionError("Can't change version to Nil UUID / Max UUID.")
+        raise UUIDVersionError("Can't change version to Nil UUID / Max UUID.")
     elif version not in UUIDVersion.values():
-        raise UUIDVerionError("Unknown UUID version.")
+        raise UUIDVersionError("Unknown UUID version.")
     elif version == uuid_info.version.value:
-        raise UUIDVerionError("Same UUID version.")
+        raise UUIDVersionError("Same UUID version.")
     
     if version not in (3, 5,):
         uuid = UUIDStruct.from_uuidstr(uuid_str[:14] + hex(version)[2:] + uuid_str[15:])

@@ -6,7 +6,7 @@ from uuid import UUID
 from .database_1c import from_1c, to_1c
 from .domain import get_domain
 from .enums import UUIDVariant, UUIDVersion
-from .errors import UUIDNotMaxError, UUIDNotNilError, UUIDParserError, UUIDTimeError, UUIDVariantError, UUIDVerionError
+from .errors import UUIDNotMaxError, UUIDNotNilError, UUIDParserError, UUIDTimeError, UUIDVariantError, UUIDVersionError
 from .info import get_secret, UUIDInfo, UUIDDict
 from .struct import UUIDStruct
 from .time import change_time, get_time
@@ -27,7 +27,7 @@ __all__ = ["UUIDDict",
            "UUIDVarSeq",
            "UUIDVariant",
            "UUIDVariantError",
-           "UUIDVerionError",
+           "UUIDVersionError",
            "UUIDVersion",
            "change_time",
            "change_variant",
@@ -84,7 +84,7 @@ class UUIDParser:
         elif self.version == 15 and self.uuid.str != "ffffffff-ffff-ffff-ffff-ffffffffffff":
             raise UUIDNotMaxError(f"{self.uuid.str} have max version and not match with Max UUID.")
         elif self.version not in UUIDVersion.values():
-            raise UUIDVerionError(f"UUIDv{self.version} not supported now.")
+            raise UUIDVersionError(f"UUIDv{self.version} not supported now.")
         
         self.time: Optional[datetime] = get_time(self.uuid, self.version,)
         self.secret: Dict[str, Union[int, str]] = get_secret(self.uuid, self.version, self.varseq,)
